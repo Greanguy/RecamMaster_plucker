@@ -1,0 +1,11 @@
+video_path,id,relpath,success,num_frames,height,width,aspect_ratio,resolution,fps,timestamp,frame_numbers
+/data1/home/xu_zifan/ReCamMaster/results_mydata_15fps/cam_type1/video2.mp4,video2,video2.mp4,True,81,480,832,0.5769230769230769,399360,15.0,[],[]
+/data1/home/xu_zifan/ReCamMaster/results_mydata_15fps/cam_type1/video1.mp4,video1,video1.mp4,True,81,480,832,0.5769230769230769,399360,15.0,[],[]
+/data1/home/xu_zifan/ReCamMaster/results_mydata_15fps/cam_type1/video4.mp4,video4,video4.mp4,True,81,480,832,0.5769230769230769,399360,15.0,[],[]
+/data1/home/xu_zifan/ReCamMaster/results_mydata_15fps/cam_type1/video9.mp4,video9,video9.mp4,True,81,480,832,0.5769230769230769,399360,15.0,[],[]
+/data1/home/xu_zifan/ReCamMaster/results_mydata_15fps/cam_type1/video8.mp4,video8,video8.mp4,True,81,480,832,0.5769230769230769,399360,15.0,[],[]
+/data1/home/xu_zifan/ReCamMaster/results_mydata_15fps/cam_type1/video7.mp4,video7,video7.mp4,True,81,480,832,0.5769230769230769,399360,15.0,[],[]
+/data1/home/xu_zifan/ReCamMaster/results_mydata_15fps/cam_type1/video5.mp4,video5,video5.mp4,True,81,480,832,0.5769230769230769,399360,15.0,[],[]
+/data1/home/xu_zifan/ReCamMaster/results_mydata_15fps/cam_type1/video3.mp4,video3,video3.mp4,True,81,480,832,0.5769230769230769,399360,15.0,[],[]
+/data1/home/xu_zifan/ReCamMaster/results_mydata_15fps/cam_type1/video6.mp4,video6,video6.mp4,True,81,480,832,0.5769230769230769,399360,15.0,[],[]
+/data1/home/xu_zifan/ReCamMaster/results_mydata_15fps/cam_type1/video0.mp4,video0,video0.mp4,True,81,480,832,0.5769230769230769,399360,15.0,[],[]

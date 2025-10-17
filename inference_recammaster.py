@@ -90,6 +90,7 @@ class TextVideoCameraDataset(torch.utils.data.Dataset):
             frame = frame_process(frame)
             frames.append(frame)
         reader.close()
+        # frames.reverse()  # 测相机是否能静止！！！
 
         frames = torch.stack(frames, dim=0)
         frames = rearrange(frames, "T C H W -> C T H W")

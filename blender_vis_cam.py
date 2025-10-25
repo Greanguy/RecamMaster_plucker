@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Patch
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 import json
+import glob
 import os
 
 class CameraPoseVisualizer:
@@ -54,7 +55,7 @@ class CameraPoseVisualizer:
 
     def show(self):
         plt.title('Extrinsic Parameters')
-        plt.savefig('extrinsic_parameters10.jpg', format='jpg', dpi=300)
+        plt.savefig('extrinsic_parameters_blender.jpg', format='jpg', dpi=300)
         plt.show()
 
 
@@ -101,45 +102,50 @@ def parse_matrix(matrix_str):
             matrix.append(list(map(float, row.split())))
     return np.array(matrix)
 
+
+# 替换原来的数据加载部分
+def load_camera_data(args):
+    # 获取所有npy文件并按名称排序
+    npy_path = '/data1/blender_dataset/70164904-b9d8-5119-b9ef-002bcba4380c/'
+    npy_files = sorted(glob.glob(os.path.join(npy_path, '*.npy')))
+    
+    cameras = []
+    for i in range(0, len(npy_files)):
+        if i < len(npy_files):
+            data = np.load(npy_files[i])
+            cameras.append(data)
+    
+    return cameras
+
 if __name__ == '__main__':
     args = get_args()
 
-    with open(args.pose_file_path, 'r') as file:
-        data = json.load(file)
-    cameras = [parse_matrix(data[f"frame{i}"][f"cam{args.cam_idx}"]) for i in range(0, args.total_frame, args.stride)]
-    cameras = np.transpose(np.stack(cameras), (0, 2, 1))
+    came = load_camera_data(args)
+    came = np.stack(came)
+    cameras = []
+    for cam in came:
+        if cam.shape[0] == 3:
+            cam = np.vstack((cam, np.array([[0, 0, 0, 1]])))
+            cameras.append(cam)
+    cameras = np.stack(cameras)
 
     w2cs = []
     for cam in cameras:
         if cam.shape[0] == 3:
             cam = np.vstack((cam, np.array([[0, 0, 0, 1]])))
         cam = cam[:, [1, 2, 0, 3]]
-        cam[:3, 1] *= -1.
-        w2cs.append(np.linalg.inv(cam))
-    transform_matrix = np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, -1, 0, 0], [0, 0, 0, 1]])
+        cam[:3, 3] *= -1.
+        w2cs.append(cam)
+    transform_matrix = np.array([[-1, 0, 0, 0], [0, 0, 1, 0], [0, -1, 0, 0], [0, 0, 0, 1]])
     c2ws = get_c2w(w2cs, transform_matrix, True)
     scale = max(max(abs(c2w[:3, 3])) for c2w in c2ws)
     if scale > 1e-3:  # otherwise, pan or tilt
         for c2w in c2ws:
             c2w[:3, 3] /= scale
 
-    # ------------ 写入 c2ws 文件（两种格式） ------------
-    # 1) 人类可读的文本文件 c2ws.txt（每个矩阵前有注释 # matrix i）
-    # out_txt = os.path.join(os.getcwd(), "c2ws.txt")
-    # with open(out_txt, "w", encoding="utf-8") as f:
-    #     for i, mat in enumerate(c2ws):
-    #         f.write(f"# matrix {i}\n")
-    #         for row in mat:
-    #             # 以空格分隔写一行，保持浮点数 full precision
-    #             f.write(" ".join([repr(float(x)) for x in row]) + "\n")
-    #         f.write("\n")
-    # print(f"Saved {len(c2ws)} camera-to-world matrices to {out_txt}")
-
-    # 可视化并保存图片
     visualizer = CameraPoseVisualizer([args.x_min, args.x_max], [args.y_min, args.y_max], [args.z_min, args.z_max])
     for frame_idx, c2w in enumerate(c2ws):
         visualizer.extrinsic2pyramid(c2w, frame_idx / len(cameras), hw_ratio=args.hw_ratio, base_xval=args.base_xval,
                                      zval=(args.zval))
     visualizer.colorbar(len(cameras))
     visualizer.show()
-

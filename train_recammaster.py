@@ -624,7 +624,7 @@ def parse_args():
     )
     parser.add_argument(
         "--use_swanlab",
-        default=False,
+        default=True,
         action="store_true",
         help="Whether to use SwanLab logger.",
     )

@@ -106,7 +106,7 @@ def parse_matrix(matrix_str):
 # 替换原来的数据加载部分
 def load_camera_data(args):
     # 获取所有npy文件并按名称排序
-    npy_path = '/data1/blender_dataset/70164904-b9d8-5119-b9ef-002bcba4380c/'
+    npy_path = '/data1/blender_dataset/2c4485c5-d336-5fb4-9af3-b6563e83d8a3/'
     npy_files = sorted(glob.glob(os.path.join(npy_path, '*.npy')))
     
     cameras = []

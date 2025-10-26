@@ -54,7 +54,7 @@ class CameraPoseVisualizer:
 
     def show(self):
         plt.title('Extrinsic Parameters')
-        plt.savefig('extrinsic_parameters06.jpg', format='jpg', dpi=300)
+        plt.savefig('extrinsic_parameters11.jpg', format='jpg', dpi=300)
         plt.show()
 
 

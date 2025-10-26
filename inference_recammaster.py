@@ -31,6 +31,7 @@ class TextVideoCameraDataset(torch.utils.data.Dataset):
         self.is_i2v = is_i2v
         self.args = args
         self.cam_type = self.args.cam_type
+        self.target_cam_path = self.args.target_cam_path
 
         self.cam_intri_path = [os.path.join(base_path, "intrinsics", file_name) for file_name in metadata["file_name"]]
         self.cam_intri_path = [path.replace("mp4", "npy") for path in self.cam_intri_path]
@@ -152,7 +153,7 @@ class TextVideoCameraDataset(torch.utils.data.Dataset):
         data = {"text": text, "video": video, "path": path}
 
         # load camera
-        tgt_camera_path = "./example_test_data/cameras/camera_extrinsics.json"
+        tgt_camera_path = self.target_cam_path
         with open(tgt_camera_path, 'r') as file:
             cam_data = json.load(file)
 
@@ -238,6 +239,11 @@ def parse_args():
         "--cfg_scale",
         type=float,
         default=5.0,
+    )
+    parser.add_argument(
+        "--target_cam_path",
+        type=str,
+        default="./example_test_data/cameras/camera_extrinsics.json",
     )
     args = parser.parse_args()
     return args

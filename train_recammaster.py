@@ -330,7 +330,8 @@ class LightningModelForTrain(pl.LightningModule):
             # block.cam_encoder = nn.Linear(12, dim)
             block.cam_encoder = nn.Conv2d(in_channels=6, out_channels=dim, kernel_size=(16, 16), stride=(16, 16))
             block.projector = nn.Linear(dim, dim)
-            block.cam_encoder.weight.data.zero_()
+            # block.cam_encoder.weight.data.zero_()
+            nn.init.kaiming_normal_(block.cam_encoder.weight, mode="fan_out", nonlinearity="relu") # need to try another method
             block.cam_encoder.bias.data.zero_()
             block.projector.weight = nn.Parameter(torch.eye(dim))
             block.projector.bias = nn.Parameter(torch.zeros(dim))
@@ -703,7 +704,6 @@ def train(args):
 
     if args.use_swanlab:
         from swanlab.integration.pytorch_lightning import SwanLabLogger
-        swanlab.finish()
         swanlab_config = {"UPPERFRAMEWORK": "DiffSynth-Studio"}
         swanlab_config.update(vars(args))
         swanlab_logger = SwanLabLogger(

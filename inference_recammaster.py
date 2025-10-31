@@ -247,7 +247,7 @@ def parse_args():
     parser.add_argument(
         "--target_cam_path",
         type=str,
-        default="./example_test_data/cameras/camera_extrinsics.json",
+        default="./inference_data/example_test_data/cameras/camera_extrinsics.json",
     )
     parser.add_argument(
         "--normalize_intrinsics",

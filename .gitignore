@@ -1,3 +1,8 @@
 *__pycache__
 *.ckpt
 Wan-AI
+frames
+*.mp4
+inference_results
+inference_data
+visualization_results

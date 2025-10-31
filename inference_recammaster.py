@@ -35,6 +35,7 @@ class TextVideoCameraDataset(torch.utils.data.Dataset):
 
         self.cam_intri_path = [os.path.join(base_path, "intrinsics", file_name) for file_name in metadata["file_name"]]
         self.cam_intri_path = [path.replace("mp4", "npy") for path in self.cam_intri_path]
+        self.normalize_intrinsics_flag = self.args.normalize_intrinsics
             
         self.frame_process = v2.Compose([
             v2.CenterCrop(size=(height, width)),
@@ -185,9 +186,12 @@ class TextVideoCameraDataset(torch.utils.data.Dataset):
         pose_embedding = torch.stack(relative_poses, dim=0)  # 81x4x4
 
         # load intrinsics
-        intri = np.load(intri_path)  
+        intri = np.load(intri_path)
+        if intri.ndim == 1:
+            intri = intri[None, :]  
         assert intri.ndim == 2 and intri.shape[1] == 4
-        intri = self.normalize_intrinsics(intri)
+        if self.normalize_intrinsics_flag:
+            intri = self.normalize_intrinsics(intri)
         if intri.shape[0] != pose_embedding.shape[0]:
             intri = self.reshape_array(intri, pose_embedding.shape[0])
         intri[:, 0] *= self.width
@@ -244,6 +248,11 @@ def parse_args():
         "--target_cam_path",
         type=str,
         default="./example_test_data/cameras/camera_extrinsics.json",
+    )
+    parser.add_argument(
+        "--normalize_intrinsics",
+        type=bool,
+        default=True,
     )
     args = parser.parse_args()
     return args

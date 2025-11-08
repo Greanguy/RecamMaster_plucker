@@ -328,11 +328,11 @@ class LightningModelForTrain(pl.LightningModule):
         # 太骚了，这里会直接修改 wan_video_dit.py 里 DiT 的结构！！！ 那边甚至直接使用了这些新加的模块（虽然那边并未自己定义）
         for block in self.pipe.dit.blocks:
             # block.cam_encoder = nn.Linear(12, dim)
-            block.cam_encoder = nn.Conv2d(in_channels=6, out_channels=dim, kernel_size=(16, 16), stride=(16, 16))
+            # block.cam_encoder = nn.Conv2d(in_channels=6, out_channels=dim, kernel_size=(16, 16), stride=(16, 16))
             block.projector = nn.Linear(dim, dim)
             # block.cam_encoder.weight.data.zero_()
-            nn.init.kaiming_normal_(block.cam_encoder.weight, mode="fan_out", nonlinearity="relu") # need to try another method
-            block.cam_encoder.bias.data.zero_()
+            # nn.init.kaiming_normal_(block.cam_encoder.weight, mode="fan_out", nonlinearity="relu") # need to try another method
+            # block.cam_encoder.bias.data.zero_()
             block.projector.weight = nn.Parameter(torch.eye(dim))
             block.projector.bias = nn.Parameter(torch.zeros(dim))
         
@@ -342,7 +342,7 @@ class LightningModelForTrain(pl.LightningModule):
 
         self.freeze_parameters() # denoising_model == dit !!!
         for name, module in self.pipe.denoising_model().named_modules():
-            if any(keyword in name for keyword in ["cam_encoder", "projector", "self_attn"]):
+            if any(keyword in name for keyword in ["projector", "self_attn"]): # remove cam_encoder for pure PRoPE version
                 print(f"Trainable: {name}")
                 for param in module.parameters():
                     param.requires_grad = True
@@ -708,7 +708,7 @@ def train(args):
         swanlab_config.update(vars(args))
         swanlab_logger = SwanLabLogger(
             project="wan", 
-            name="wan",
+            name="wan-PRoPE",
             config=swanlab_config,
             mode=args.swanlab_mode,
             logdir=os.path.join(args.output_path, "swanlog"),

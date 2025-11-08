@@ -54,13 +54,13 @@ class CameraPoseVisualizer:
 
     def show(self):
         plt.title('Extrinsic Parameters')
-        plt.savefig('extrinsic_parameters11.jpg', format='jpg', dpi=300)
+        plt.savefig('extrinsic_parameters3.jpg', format='jpg', dpi=300)
         plt.show()
 
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--pose_file_path', default='./example_test_data/cameras/camera_extrinsics.json', type=str, help='the path of the pose file')
+    parser.add_argument('--pose_file_path', default='/data1/home/xu_zifan/ReCamMaster/inference_data/example_test_data/cameras/camera_extrinsics.json', type=str, help='the path of the pose file')
     parser.add_argument('--hw_ratio', default=9/16, type=float, help='the height over width of the film plane')
     parser.add_argument('--total_frame', type=int, default=81)
     parser.add_argument('--stride', type=int, default=4)

@@ -1,0 +1,3 @@
+video_pair,num_pairs,tau,matpix_total,matpix_mean,matpix_total_K,matpix_mean_K
+generated_video_frames,81,0.5,158845,1961.049,158.845,1.961
+AVERAGE_OVER_ALL,81,0.5,,1961.049,,1.961

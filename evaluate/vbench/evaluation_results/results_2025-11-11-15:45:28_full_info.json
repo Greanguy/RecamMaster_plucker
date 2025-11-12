@@ -1,0 +1,29 @@
+[
+    {
+        "prompt_en": "video1",
+        "dimension": [
+            "motion_smoothness"
+        ],
+        "video_list": [
+            "/data1/home/liu_kai/ReCamMaster/results/cam_type1/video1.mp4"
+        ]
+    },
+    {
+        "prompt_en": "video2",
+        "dimension": [
+            "motion_smoothness"
+        ],
+        "video_list": [
+            "/data1/home/liu_kai/ReCamMaster/results/cam_type1/video2.mp4"
+        ]
+    },
+    {
+        "prompt_en": "video0",
+        "dimension": [
+            "motion_smoothness"
+        ],
+        "video_list": [
+            "/data1/home/liu_kai/ReCamMaster/results/cam_type1/video0.mp4"
+        ]
+    }
+]

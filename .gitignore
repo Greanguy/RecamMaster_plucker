@@ -6,3 +6,9 @@ frames
 inference_results
 inference_data
 visualization_results
+# weights
+*.safetensors
+*.pt
+*.pth
+checkpoints/
+

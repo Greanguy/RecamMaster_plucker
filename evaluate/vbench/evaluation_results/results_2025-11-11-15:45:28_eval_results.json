@@ -1,0 +1,19 @@
+{
+    "motion_smoothness": [
+        0.9929521339808182,
+        [
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/results/cam_type1/video1.mp4",
+                "video_results": 0.9909570799390136
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/results/cam_type1/video2.mp4",
+                "video_results": 0.9947003148665315
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/results/cam_type1/video0.mp4",
+                "video_results": 0.9931990071369093
+            }
+        ]
+    ]
+}

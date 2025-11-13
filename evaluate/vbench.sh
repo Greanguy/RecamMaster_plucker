@@ -1,6 +1,6 @@
-vbench evaluate \
-    --videos_path ./results/cam_type1/ \
-    --dimension "motion_smoothness" \
+CUDA_VISIBLE_DEVICES=7 vbench evaluate \
+    --videos_path /data1/home/liu_kai/ReCamMaster/recam_result/cam_type9 \
+    --dimension "temporal_flickering" \
     --mode=custom_input 
 # 评估自己的视频时即--mode=custom_input(不需要提示集), 只支持下面的六个维度(都是visual quality层面的):
     # Note: We support customized videos / prompts for the following dimensions: 

@@ -1,0 +1,67 @@
+{
+    "background_consistency": [
+        0.9228179931640625,
+        [
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/recam_result/cam_type9/video4.mp4",
+                "video_results": 0.9144775390625,
+                "video_sim": 73.158203125,
+                "cnt_per_video": 80
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/recam_result/cam_type9/video1.mp4",
+                "video_results": 0.9239410400390625,
+                "video_sim": 73.915283203125,
+                "cnt_per_video": 80
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/recam_result/cam_type9/video9.mp4",
+                "video_results": 0.9548492431640625,
+                "video_sim": 76.387939453125,
+                "cnt_per_video": 80
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/recam_result/cam_type9/video7.mp4",
+                "video_results": 0.9119659423828125,
+                "video_sim": 72.957275390625,
+                "cnt_per_video": 80
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/recam_result/cam_type9/video8.mp4",
+                "video_results": 0.90748291015625,
+                "video_sim": 72.5986328125,
+                "cnt_per_video": 80
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/recam_result/cam_type9/video2.mp4",
+                "video_results": 0.9330352783203125,
+                "video_sim": 74.642822265625,
+                "cnt_per_video": 80
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/recam_result/cam_type9/video5.mp4",
+                "video_results": 0.9189697265625,
+                "video_sim": 73.517578125,
+                "cnt_per_video": 80
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/recam_result/cam_type9/video3.mp4",
+                "video_results": 0.9046722412109375,
+                "video_sim": 72.373779296875,
+                "cnt_per_video": 80
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/recam_result/cam_type9/video6.mp4",
+                "video_results": 0.9514373779296875,
+                "video_sim": 76.114990234375,
+                "cnt_per_video": 80
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/recam_result/cam_type9/video0.mp4",
+                "video_results": 0.9073486328125,
+                "video_sim": 72.587890625,
+                "cnt_per_video": 80
+            }
+        ]
+    ]
+}

@@ -13,14 +13,25 @@ Input JSON format example:
 }
 
 Usage:
+
+# 单个 EST
 python cam_err.py \
   --gt path/to/gt_traj.json \
   --est path/to/est_traj.json \
   --key cam01 \
   --convention cam2world   # or world2cam
+
+# 批量模式：对 est_dir 中所有 .json 估计文件逐个评估，写出 CSV
+python cam_err.py \
+  --gt path/to/gt_traj.json \
+  --est_dir path/to/est_dir \
+  --key cam01 \
+  --convention cam2world \
+  --csv_out results/cam_err_all.csv \
+  --ignore_first
 """
 
-import json, re, argparse, math
+import json, re, argparse, math, csv
 import numpy as np
 from pathlib import Path
 from typing import Dict, List, Tuple
@@ -28,12 +39,28 @@ from typing import Dict, List, Tuple
 def parse_args():
     ap = argparse.ArgumentParser()
     ap.add_argument('--gt', required=True, help='GT 轨迹 JSON 路径')
-    ap.add_argument('--est', required=True, help='EST 轨迹 JSON 路径')
-    ap.add_argument('--key', default='cam11', help='相机键名 如 cam11')
-    ap.add_argument('--convention', default='world2cam', choices=['world2cam','cam2world'],
-                   help='外参约定: world2cam 表示 x_cam=R x_world + t; cam2world 表示 x_world=R x_cam + t')
-    ap.add_argument('--ignore_first', action='store_true',help='是否忽略首帧统计 常见做法，默认不忽略')
-    ap.add_argument('--out', default=None,help='可选：把结果保存为 JSON 文件（会自动创建目录）')
+
+    # 单个 or 批量：二选一
+    ap.add_argument('--est', default=None,
+                    help='单个 EST 轨迹 JSON 路径（与 --est_dir 二选一）')
+    ap.add_argument('--est_dir', default=None,
+                    help='若提供，则对该目录下所有 .json 作为 EST 批量评估')
+
+    ap.add_argument('--key', default='cam09', help='相机键名 如 cam09')
+    ap.add_argument('--convention', default='world2cam',
+                    choices=['world2cam','cam2world'],
+                    help='外参约定: world2cam 表示 x_cam=R x_world + t; cam2world 表示 x_world=R x_cam + t')
+    ap.add_argument('--ignore_first', action='store_true',
+                    help='是否忽略首帧统计 常见做法，默认不忽略')
+
+    # 单文件模式下：输出 JSON
+    ap.add_argument('--out', default=None,
+                    help='可选：单文件模式下把结果保存为 JSON 文件（会自动创建目录）')
+
+    # 批量模式下：输出 CSV
+    ap.add_argument('--csv_out', default=None,
+                    help='批量模式下，把所有 EST 的结果写入 CSV 文件路径')
+
     return ap.parse_args()
 
 _num_re = re.compile(r'[-+]?(\d+(\.\d*)?|\.\d+)([eE][-+]?\d+)?')
@@ -136,7 +163,8 @@ def evaluate(gt_json: str, est_json: str, key: str, convention: str, ignore_firs
 
     def stats(x):
         x = np.array(x, dtype=np.float64)
-        return dict(mean=float(x.mean()), median=float(np.median(x)), min=float(x.min()), max=float(x.max()))
+        return dict(mean=float(x.mean()), median=float(np.median(x)),
+                    min=float(x.min()), max=float(x.max()))
 
     return {
         'num_frames': N,
@@ -144,14 +172,18 @@ def evaluate(gt_json: str, est_json: str, key: str, convention: str, ignore_firs
         'scale_s': float(s),
         'RotErr_deg': {**stats(rot_err_list)},
         'TransErr':   {**stats(trans_err_list)},
+        # per_frame 在批量 CSV 中不会用到，但单个分析时可能还想看
         'per_frame': {
             'rot_err_deg': rot_err_list,
             'trans_err': trans_err_list
         }
     }
 
-if __name__ == '__main__':
-    args = parse_args()
+def run_single(args):
+    """单个 EST 文件模式（旧行为）"""
+    if args.est is None:
+        raise SystemExit('单文件模式下必须提供 --est')
+
     out = evaluate(args.gt, args.est, args.key, args.convention, args.ignore_first)
     if args.out:
         out_path = Path(args.out)
@@ -160,4 +192,105 @@ if __name__ == '__main__':
             json.dump(out, f, ensure_ascii=False, indent=2)
         print(f'[cam_err] 结果已保存到: {str(out_path.resolve())}')
     else:
-        import pprint; pprint.pprint(out)
+        import pprint
+        pprint.pprint(out)
+
+def run_batch(args):
+    """批量模式：对 est_dir 中所有 .json 文件评估并写出 CSV"""
+    if args.est_dir is None:
+        raise SystemExit('批量模式下必须提供 --est_dir')
+
+    est_dir = Path(args.est_dir)
+    if not est_dir.is_dir():
+        raise SystemExit(f'est_dir 不是目录: {est_dir}')
+
+    est_paths = sorted(est_dir.glob('*.json'))
+    if not est_paths:
+        raise SystemExit(f'est_dir 中未找到任何 .json 文件: {est_dir}')
+
+    if args.csv_out is None:
+        raise SystemExit('批量模式下必须通过 --csv_out 指定输出 CSV 文件路径')
+
+    csv_path = Path(args.csv_out)
+    csv_path.parent.mkdir(parents=True, exist_ok=True)
+
+    rows = []
+    all_rot_mean = []
+    all_trans_mean = []
+
+    for est_path in est_paths:
+        res = evaluate(args.gt, str(est_path), args.key, args.convention, args.ignore_first)
+
+        name = est_path.name  # 可视为“每个视频”的名字
+        rot_stats = res['RotErr_deg']
+        trans_stats = res['TransErr']
+
+        rows.append({
+            'name': name,
+            'num_frames': res['num_frames'],
+            'ignore_first': res['ignore_first'],
+            'scale_s': res['scale_s'],
+            'RotErr_mean': rot_stats['mean'],
+            'RotErr_median': rot_stats['median'],
+            'RotErr_min': rot_stats['min'],
+            'RotErr_max': rot_stats['max'],
+            'TransErr_mean': trans_stats['mean'],
+            'TransErr_median': trans_stats['median'],
+            'TransErr_min': trans_stats['min'],
+            'TransErr_max': trans_stats['max'],
+        })
+
+        all_rot_mean.append(rot_stats['mean'])
+        all_trans_mean.append(trans_stats['mean'])
+
+    # 所有“视频”的平均误差：这里用“各视频 mean 的平均”
+    all_rot_mean = float(np.mean(all_rot_mean))
+    all_trans_mean = float(np.mean(all_trans_mean))
+
+    overall_row = {
+        'name': 'OVERALL',
+        'num_frames': '',
+        'ignore_first': args.ignore_first,
+        'scale_s': '',
+        'RotErr_mean': all_rot_mean,
+        'RotErr_median': '',
+        'RotErr_min': '',
+        'RotErr_max': '',
+        'TransErr_mean': all_trans_mean,
+        'TransErr_median': '',
+        'TransErr_min': '',
+        'TransErr_max': '',
+    }
+    rows.append(overall_row)
+
+    fieldnames = [
+        'name', 'num_frames', 'ignore_first', 'scale_s',
+        'RotErr_mean', 'RotErr_median', 'RotErr_min', 'RotErr_max',
+        'TransErr_mean', 'TransErr_median', 'TransErr_min', 'TransErr_max',
+    ]
+
+    with csv_path.open('w', newline='', encoding='utf-8') as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        for r in rows:
+            writer.writerow(r)
+
+    print(f'[cam_err] 批量结果已保存到 CSV: {csv_path.resolve()}')
+    print(f'[cam_err] OVERALL RotErr_mean={all_rot_mean:.4f} deg, '
+          f'TransErr_mean={all_trans_mean:.4f}')
+
+if __name__ == '__main__':
+    args = parse_args()
+
+    # 选择模式
+    has_est = args.est is not None
+    has_est_dir = args.est_dir is not None
+
+    if not has_est and not has_est_dir:
+        raise SystemExit('必须至少提供 --est 或 --est_dir 之一')
+
+    # 如果两个都提供，优先认为是批量模式（--est 可以忽略）
+    if has_est_dir:
+        run_batch(args)
+    else:
+        run_single(args)

@@ -79,3 +79,7 @@ VBench 提供多维度的视频生成质量评估，本模块其评估视觉质�
   - **Install GIM**
 
   建议先按照RecamMaster_plucker/evaluate/gim/environment.yaml为gim配置一个虚拟环境，然后在该环境下运行mat.pix.sh，该命令文件中包含参数的说明
+
+---
+## Test
+

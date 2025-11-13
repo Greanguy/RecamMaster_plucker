@@ -1,0 +1,142 @@
+[
+    {
+        "prompt_en": "video4",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "/data1/home/liu_kai/ReCamMaster/recam_result/cam_type9/video4.mp4"
+        ]
+    },
+    {
+        "prompt_en": "video1",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "/data1/home/liu_kai/ReCamMaster/recam_result/cam_type9/video1.mp4"
+        ]
+    },
+    {
+        "prompt_en": "video9",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "/data1/home/liu_kai/ReCamMaster/recam_result/cam_type9/video9.mp4"
+        ]
+    },
+    {
+        "prompt_en": "video7",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "/data1/home/liu_kai/ReCamMaster/recam_result/cam_type9/video7.mp4"
+        ]
+    },
+    {
+        "prompt_en": "video8",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "/data1/home/liu_kai/ReCamMaster/recam_result/cam_type9/video8.mp4"
+        ]
+    },
+    {
+        "prompt_en": "video2",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "/data1/home/liu_kai/ReCamMaster/recam_result/cam_type9/video2.mp4"
+        ]
+    },
+    {
+        "prompt_en": "video5",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "/data1/home/liu_kai/ReCamMaster/recam_result/cam_type9/video5.mp4"
+        ]
+    },
+    {
+        "prompt_en": "video3",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "/data1/home/liu_kai/ReCamMaster/recam_result/cam_type9/video3.mp4"
+        ]
+    },
+    {
+        "prompt_en": "video6",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "/data1/home/liu_kai/ReCamMaster/recam_result/cam_type9/video6.mp4"
+        ]
+    },
+    {
+        "prompt_en": "video0",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "/data1/home/liu_kai/ReCamMaster/recam_result/cam_type9/video0.mp4"
+        ]
+    }
+]

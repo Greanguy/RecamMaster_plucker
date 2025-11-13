@@ -1,0 +1,92 @@
+[
+    {
+        "prompt_en": "video4",
+        "dimension": [
+            "motion_smoothness"
+        ],
+        "video_list": [
+            "/data1/home/liu_kai/ReCamMaster/recam_result/cam_type9/video4.mp4"
+        ]
+    },
+    {
+        "prompt_en": "video1",
+        "dimension": [
+            "motion_smoothness"
+        ],
+        "video_list": [
+            "/data1/home/liu_kai/ReCamMaster/recam_result/cam_type9/video1.mp4"
+        ]
+    },
+    {
+        "prompt_en": "video9",
+        "dimension": [
+            "motion_smoothness"
+        ],
+        "video_list": [
+            "/data1/home/liu_kai/ReCamMaster/recam_result/cam_type9/video9.mp4"
+        ]
+    },
+    {
+        "prompt_en": "video7",
+        "dimension": [
+            "motion_smoothness"
+        ],
+        "video_list": [
+            "/data1/home/liu_kai/ReCamMaster/recam_result/cam_type9/video7.mp4"
+        ]
+    },
+    {
+        "prompt_en": "video8",
+        "dimension": [
+            "motion_smoothness"
+        ],
+        "video_list": [
+            "/data1/home/liu_kai/ReCamMaster/recam_result/cam_type9/video8.mp4"
+        ]
+    },
+    {
+        "prompt_en": "video2",
+        "dimension": [
+            "motion_smoothness"
+        ],
+        "video_list": [
+            "/data1/home/liu_kai/ReCamMaster/recam_result/cam_type9/video2.mp4"
+        ]
+    },
+    {
+        "prompt_en": "video5",
+        "dimension": [
+            "motion_smoothness"
+        ],
+        "video_list": [
+            "/data1/home/liu_kai/ReCamMaster/recam_result/cam_type9/video5.mp4"
+        ]
+    },
+    {
+        "prompt_en": "video3",
+        "dimension": [
+            "motion_smoothness"
+        ],
+        "video_list": [
+            "/data1/home/liu_kai/ReCamMaster/recam_result/cam_type9/video3.mp4"
+        ]
+    },
+    {
+        "prompt_en": "video6",
+        "dimension": [
+            "motion_smoothness"
+        ],
+        "video_list": [
+            "/data1/home/liu_kai/ReCamMaster/recam_result/cam_type9/video6.mp4"
+        ]
+    },
+    {
+        "prompt_en": "video0",
+        "dimension": [
+            "motion_smoothness"
+        ],
+        "video_list": [
+            "/data1/home/liu_kai/ReCamMaster/recam_result/cam_type9/video0.mp4"
+        ]
+    }
+]

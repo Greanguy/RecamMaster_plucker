@@ -5,6 +5,8 @@ import torch
 import pandas as pd
 import numpy as np
 from tqdm import tqdm
+from PIL import Image
+
 
 # ---------------- Video backends ----------------
 _BACKENDS = {}
@@ -201,6 +203,133 @@ def clip_T_and_F(model, tokenizer, preprocess, frames: List[torch.Tensor], promp
         clip_f, per_pair = float("nan"), np.array([])
     return clip_t, clip_f, sim_t.float().cpu().numpy(), per_pair
 
+@torch.no_grad()
+def compute_clip_v_for_pairs(model,preprocess,pair_root: str,device: str = "cuda",fp16: bool = False,batch_size: int = 64,
+    out_csv: str = "clipv_results.csv",dump_per_frame: Optional[str] = None):
+    """
+    pair_root 结构为:
+      pair_root/
+        video001/
+          t0000/ frame_0000.jpg frame_0001.jpg
+          t0001/ ...
+        video002/
+          ...
+
+    每个 tXXXX 目录中取两张图 (按文件名排序取前两张)
+    用 CLIP image encoder 编码后算余弦相似度
+    对一个 videoXXX 下的所有 tXXXX 求平均，即为该 pair 的 CLIP-V
+    """
+    assert os.path.isdir(pair_root), f"Invalid pair_root: {pair_root}"
+
+    def _is_img(f):
+        return f.lower().endswith((".jpg", ".jpeg", ".png", ".bmp", ".webp"))
+
+    all_rows = []
+    per_rows = []
+
+    video_dirs = sorted([d for d in os.listdir(pair_root) if os.path.isdir(os.path.join(pair_root, d))])
+
+    for vname in tqdm(video_dirs, desc="Computing CLIP-V (pairs)"):
+        vdir = os.path.join(pair_root, vname)
+        time_dirs = sorted([d for d in os.listdir(vdir) if os.path.isdir(os.path.join(vdir, d))])
+
+        # 收集该视频下所有 (t_dir, img1, img2)
+        pair_infos = []  # (tname, img1_path, img2_path)
+        for tname in time_dirs:
+            tdir = os.path.join(vdir, tname)
+            imgs = sorted([
+                os.path.join(tdir, f)
+                for f in os.listdir(tdir)
+                if _is_img(f)
+            ])
+            if len(imgs) < 2:
+                continue
+            pair_infos.append((tname, imgs[0], imgs[1]))
+
+        if len(pair_infos) == 0:
+            all_rows.append({
+                "video_pair": vname,
+                "num_pairs": 0,
+                "clip_v": "",
+                "note": "no_valid_pairs"
+            })
+            continue
+
+        # 一次性把该 video 下所有图片读入 批量算特征
+        pil_images = []
+        pair_index = []  # (idx1, idx2, tname)
+        for tname, p1, p2 in pair_infos:
+            im1 = Image.open(p1).convert("RGB")
+            im2 = Image.open(p2).convert("RGB")
+            pil_images.append(im1)
+            pil_images.append(im2)
+            idx1 = len(pil_images) - 2
+            idx2 = len(pil_images) - 1
+            pair_index.append((idx1, idx2, tname))
+
+        tensors = [preprocess(im) for im in pil_images]
+        X = torch.stack(tensors, dim=0).to(device)
+
+        feats_list = []
+        for i in range(0, X.shape[0], batch_size):
+            xb = X[i:i+batch_size]
+            fb = model.encode_image(xb)
+            if fp16 and device.startswith("cuda"):
+                fb = fb.to(dtype=torch.float16)
+            fb = fb / fb.norm(dim=-1, keepdim=True)
+            feats_list.append(fb)
+        feats = torch.cat(feats_list, dim=0)  # [N, D]
+
+        # 逐对计算相似度
+        sims = []
+        for idx1, idx2, tname in pair_index:
+            f1 = feats[idx1]
+            f2 = feats[idx2]
+            s = (f1 * f2).sum().item()  # 余弦相似度（已归一化）
+            sims.append((tname, s))
+
+        values = [s for (_, s) in sims]
+        clip_v = float(np.mean(values))
+
+        all_rows.append({
+            "video_pair": vname,
+            "num_pairs": len(values),
+            "clip_v": clip_v,
+            "note": ""
+        })
+
+        if dump_per_frame is not None:
+            for tname, s in sims:
+                per_rows.append({
+                    "video_pair": vname,
+                    "time": tname,
+                    "index": int(tname[1:]) if tname.startswith("t") and tname[1:].isdigit() else "",
+                    "value": float(s),
+                })
+
+    # 全局平均 CLIP-V
+    valid_vals = [r["clip_v"] for r in all_rows if isinstance(r.get("clip_v"), (int, float))]
+    if len(valid_vals) > 0:
+        mean_v = float(np.mean(valid_vals))
+        all_rows.append({
+            "video_pair": "ALL_MEAN",
+            "num_pairs": "",
+            "clip_v": mean_v,
+            "note": f"mean_over_{len(valid_vals)}_video_pairs"
+        })
+
+    os.makedirs(os.path.dirname(out_csv) or ".", exist_ok=True)
+    pd.DataFrame(all_rows).to_csv(out_csv, index=False)
+
+    if dump_per_frame is not None and len(per_rows) > 0:
+        os.makedirs(os.path.dirname(dump_per_frame) or ".", exist_ok=True)
+        pd.DataFrame(per_rows).to_csv(dump_per_frame, index=False)
+
+    print(f"Saved CLIP-V summary to {out_csv}")
+    if dump_per_frame:
+        print(f"Saved CLIP-V per-frame details to {dump_per_frame}")
+
+
 # ---------------- CSV loader ----------------
 def load_pairs_from_csv(csv_path: str, video_col: str, text_col: str,video_root: Optional[str]) -> List[Tuple[str, str]]:
     df = pd.read_csv(csv_path)
@@ -236,6 +365,11 @@ def main():
     g.add_argument("--csv-video-col", type=str, default="file_name",help="CSV column name for video name (default 'file_name')")
     g.add_argument("--csv-text-col", type=str, default="text",help="CSV column name for text prompt (default 'text')")
     g.add_argument("--video-root", type=str, default=None,help="Root directory containing videos; final path = join(video_root, <csv_video_name>)")
+    
+    g = parser.add_argument_group("CLIP-V (video vs reference frames)")
+    g.add_argument("--pair-root", type=str, default=None,help="Root dir of frame pairs: videoXXX/t0000/*.jpg (2 images per t)")
+    g.add_argument("--clipv-out", type=str, default="clipv_results.csv",help="Output CSV for CLIP-V over frame pairs")
+    g.add_argument("--clipv-dump-per-frame", type=str, default=None,help="Optional CSV for per-frame CLIP-V values")
 
     g = parser.add_argument_group("Sampling")
     g.add_argument("--every-n", type=int, default=None, help="Take 1 frame every N frames")
@@ -256,13 +390,24 @@ def main():
     args = parser.parse_args()
 
     # build (video, prompt) list
-    if args.prompts_csv is None:
-        assert args.video is not None and args.prompt is not None, \
-            "Either provide --prompts-csv, or both --video and --prompt."
-        pairs = [(args.video, args.prompt)]
-    else:
-        pairs = load_pairs_from_csv(args.prompts_csv, args.csv_video_col, args.csv_text_col, args.video_root)
+    do_clip_tf = False      # 是否需要跑 CLIP-T / CLIP-F
+    if args.prompts_csv is not None:
+        do_clip_tf = True
+    elif args.video is not None and args.prompt is not None:
+        do_clip_tf = True
 
+    if not do_clip_tf and args.pair_root is None:
+        raise ValueError("You must provide either --prompts-csv / (--video & --prompt) for CLIP-T/F, "
+                         "or --pair-root for CLIP-V.")
+
+    # build (video, prompt) list
+    if do_clip_tf:
+        if args.prompts_csv is None:
+            pairs = [(args.video, args.prompt)]
+        else:
+            pairs = load_pairs_from_csv(args.prompts_csv,args.csv_video_col,args.csv_text_col,args.video_root)
+    else:
+        pairs = []  # 只跑 CLIP-V 的时候用不到
     # load model (offline if local path provided)
     if args.pretrained_path:
         model, tokenizer, preprocess = load_clip_offline(
@@ -274,36 +419,55 @@ def main():
         )
 
     rows, per_rows = [], []
-    for (vid, txt) in tqdm(pairs, desc="Evaluating"):
-        if not os.path.isfile(vid):
-            rows.append({"video": vid, "prompt": txt, "num_frames": 0,
-                         "clip_t": "", "clip_f": "", "note": "video_not_found"})
-            continue
+    # 用于统计平均值
+    sum_clip_t, sum_clip_f = 0.0, 0.0
+    count_clip_t, count_clip_f = 0, 0
+    
+    if do_clip_tf:
+        for (vid, txt) in tqdm(pairs, desc="Evaluating"):
+            if not os.path.isfile(vid):
+                rows.append({"video": vid, "prompt": txt, "num_frames": 0,
+                            "clip_t": "", "clip_f": "", "note": "video_not_found"})
+                continue
 
-        try:
-            frames = read_video_frames(vid, args.every_n, args.num_frames)
-        except Exception as e:
-            rows.append({"video": vid, "prompt": txt, "num_frames": 0,
-                         "clip_t": "", "clip_f": "", "note": f"decode_error:{e}"})
-            continue
+            try:
+                frames = read_video_frames(vid, args.every_n, args.num_frames)
+            except Exception as e:
+                rows.append({"video": vid, "prompt": txt, "num_frames": 0,
+                            "clip_t": "", "clip_f": "", "note": f"decode_error:{e}"})
+                continue
 
-        clip_t, clip_f, per_t, per_f = clip_T_and_F(
-            model, tokenizer, preprocess, frames, txt,
-            device=args.device, fp16=args.fp16, batch_size=args.batch_size
-        )
+            clip_t, clip_f, per_t, per_f = clip_T_and_F(
+                model, tokenizer, preprocess, frames, txt,
+                device=args.device, fp16=args.fp16, batch_size=args.batch_size
+            )
 
-        rows.append({
-            "video": vid, "prompt": txt.strip()[:50], "num_frames": len(frames),
-            "clip_t": float(clip_t) if clip_t == clip_t else "",
-            "clip_f": float(clip_f) if clip_f == clip_f else "", "note": ""
-        })
+            rows.append({
+                "video": vid, "prompt": txt.strip()[:50], "num_frames": len(frames),
+                "clip_t": float(clip_t) if clip_t == clip_t else "",
+                "clip_f": float(clip_f) if clip_f == clip_f else "", "note": ""
+            })
 
-        if args.dump_per_frame is not None and len(frames) > 0:
-            for i, s in enumerate(per_t.tolist()):
-                per_rows.append({"video": vid, "prompt": txt, "type": "CLIP-T", "index": i, "value": float(s)})
-            for i, s in enumerate(per_f.tolist()):
-                per_rows.append({"video": vid, "prompt": txt, "type": "CLIP-F_pair", "index": i, "value": float(s)})
-
+            # 统计平均值（只统计非 NaN 的）
+            if clip_t == clip_t:  # 不是 NaN
+                sum_clip_t += float(clip_t)
+                count_clip_t += 1
+            if clip_f == clip_f:
+                sum_clip_f += float(clip_f)
+                count_clip_f += 1
+                
+            if args.dump_per_frame is not None and len(frames) > 0:
+                for i, s in enumerate(per_t.tolist()):
+                    per_rows.append({"video": vid, "prompt": txt, "type": "CLIP-T", "index": i, "value": float(s)})
+                for i, s in enumerate(per_f.tolist()):
+                    per_rows.append({"video": vid, "prompt": txt, "type": "CLIP-F_pair", "index": i, "value": float(s)})
+                
+    mean_clip_t = sum_clip_t / count_clip_t if count_clip_t > 0 else ""
+    mean_clip_f = sum_clip_f / count_clip_f if count_clip_f > 0 else ""
+    rows.append({
+        "video": "ALL_MEAN", "prompt": "", "num_frames": "","clip_t": mean_clip_t,"clip_f": mean_clip_f,
+        "note": f"mean_over_{max(count_clip_t, count_clip_f)}_videos"
+    })
     os.makedirs(os.path.dirname(args.out) or ".", exist_ok=True)
     pd.DataFrame(rows).to_csv(args.out, index=False)
 
@@ -314,6 +478,18 @@ def main():
     print(f"Saved summary to {args.out}")
     if args.dump_per_frame:
         print(f"Saved per-frame details to {args.dump_per_frame}")
+    
+    if args.pair_root is not None:
+        compute_clip_v_for_pairs(
+            model=model,
+            preprocess=preprocess,
+            pair_root=args.pair_root,
+            device=args.device,
+            fp16=args.fp16,
+            batch_size=args.batch_size,
+            out_csv=args.clipv_out,
+            dump_per_frame=args.clipv_dump_per_frame,
+        )
 
 if __name__ == "__main__":
     main()

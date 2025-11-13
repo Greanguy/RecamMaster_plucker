@@ -481,8 +481,7 @@ if __name__ == '__main__':
     # 若提供了根目录参数，则运行“批量 Mat.Pix.”并退出；否则走原有 demo 单对可视化
     if args.generated_root is not None and args.real_root is not None:
         def list_frame_dirs(root):
-            # 仅取 *_frames 的子目录
-            return sorted([d.path for d in os.scandir(root) if d.is_dir() and d.name.endswith('_frames')])
+            return sorted([d.path for d in os.scandir(root) if d.is_dir()],key=lambda p: os.path.basename(p))
 
         def norm_key(name):
             """
@@ -497,8 +496,8 @@ if __name__ == '__main__':
 
         gen_subdirs = list_frame_dirs(args.generated_root)
         real_subdirs = list_frame_dirs(args.real_root)
-        assert len(gen_subdirs) > 0, f"未在 {args.generated_root} 下找到 *_frames 子目录"
-        assert len(real_subdirs) > 0, f"未在 {args.real_root} 下找到 *_frames 子目录"
+        assert len(gen_subdirs) > 0, f"未在 {args.generated_root} 下找到子目录"
+        assert len(real_subdirs) > 0, f"未在 {args.real_root} 下找到子目录"
 
         # 建立 real 侧的索引
         real_index = {norm_key(os.path.basename(p)): p for p in real_subdirs}

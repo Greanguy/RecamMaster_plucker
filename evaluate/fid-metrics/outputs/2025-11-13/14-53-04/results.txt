@@ -1,0 +1,11 @@
+FID [video0]: 104.959990
+FID [video1]: 139.495003
+FID [video2]: 88.554933
+FID [video3]: 75.104403
+FID [video4]: 147.867487
+FID [video5]: 80.103394
+FID [video6]: 222.671691
+FID [video7]: 150.487746
+FID [video8]: 123.083556
+FID [video9]: 105.468348
+FID MEAN over 10 videos: 123.779655

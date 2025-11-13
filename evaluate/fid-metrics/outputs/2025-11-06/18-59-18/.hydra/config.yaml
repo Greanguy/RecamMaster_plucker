@@ -1,0 +1,26 @@
+metrics:
+- type: fid
+  model:
+    dims: 2048
+  data:
+    dataset:
+      resize_shape:
+      - 256
+      - 512
+    batch_size: 64
+    num_workers: 16
+- type: fvd
+  model:
+    type: videogpt
+    path: i3d_pretrained_400.pt
+  data:
+    dataset:
+      sequence_length: 81
+      resize_shape:
+      - 224
+      - 224
+    batch_size: 4
+    num_workers: 16
+paths:
+- real_video_frames
+- generated_video_frames

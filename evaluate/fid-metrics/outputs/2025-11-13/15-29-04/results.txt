@@ -1,0 +1,11 @@
+FVD [video0]: 304.653570
+FVD [video1]: 884.617678
+FVD [video2]: 1646.381205
+FVD [video3]: 572.035163
+FVD [video4]: 258.148870
+FVD [video5]: 691.793922
+FVD [video6]: 1389.028620
+FVD [video7]: 452.851683
+FVD [video8]: 669.941552
+FVD [video9]: 630.526327
+FVD MEAN over 10 videos: 749.997859

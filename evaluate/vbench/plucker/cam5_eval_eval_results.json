@@ -1,0 +1,337 @@
+{
+    "subject_consistency": [
+        0.8755025947466493,
+        [
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video4.mp4",
+                "video_results": 0.9496716693043709
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video1.mp4",
+                "video_results": 0.9665466029196977
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video9.mp4",
+                "video_results": 0.8738195531070232
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video7.mp4",
+                "video_results": 0.8183025553822517
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video8.mp4",
+                "video_results": 0.8819632142782211
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video2.mp4",
+                "video_results": 0.8769696231931448
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video5.mp4",
+                "video_results": 0.9605216749012471
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video3.mp4",
+                "video_results": 0.8194035902619362
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video6.mp4",
+                "video_results": 0.8441954791545868
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video0.mp4",
+                "video_results": 0.7636319849640131
+            }
+        ]
+    ],
+    "background_consistency": [
+        0.9093545532226562,
+        [
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video4.mp4",
+                "video_results": 0.9152618408203125,
+                "video_sim": 73.220947265625,
+                "cnt_per_video": 80
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video1.mp4",
+                "video_results": 0.9447723388671875,
+                "video_sim": 75.581787109375,
+                "cnt_per_video": 80
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video9.mp4",
+                "video_results": 0.8948974609375,
+                "video_sim": 71.591796875,
+                "cnt_per_video": 80
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video7.mp4",
+                "video_results": 0.8878509521484375,
+                "video_sim": 71.028076171875,
+                "cnt_per_video": 80
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video8.mp4",
+                "video_results": 0.9177093505859375,
+                "video_sim": 73.416748046875,
+                "cnt_per_video": 80
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video2.mp4",
+                "video_results": 0.901031494140625,
+                "video_sim": 72.08251953125,
+                "cnt_per_video": 80
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video5.mp4",
+                "video_results": 0.9466461181640625,
+                "video_sim": 75.731689453125,
+                "cnt_per_video": 80
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video3.mp4",
+                "video_results": 0.89512939453125,
+                "video_sim": 71.6103515625,
+                "cnt_per_video": 80
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video6.mp4",
+                "video_results": 0.8986419677734375,
+                "video_sim": 71.891357421875,
+                "cnt_per_video": 80
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video0.mp4",
+                "video_results": 0.8916046142578125,
+                "video_sim": 71.328369140625,
+                "cnt_per_video": 80
+            }
+        ]
+    ],
+    "motion_smoothness": [
+        0.9880217294730393,
+        [
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video4.mp4",
+                "video_results": 0.9948131967847904
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video1.mp4",
+                "video_results": 0.9955006688806667
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video9.mp4",
+                "video_results": 0.9899635783266298
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video7.mp4",
+                "video_results": 0.9817210491034021
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video8.mp4",
+                "video_results": 0.9911817035524814
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video2.mp4",
+                "video_results": 0.9863656761766539
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video5.mp4",
+                "video_results": 0.9956136162631452
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video3.mp4",
+                "video_results": 0.9840470869404119
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video6.mp4",
+                "video_results": 0.9857211810956354
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video0.mp4",
+                "video_results": 0.9752895376065758
+            }
+        ]
+    ],
+    "dynamic_degree": [
+        0.9,
+        [
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video4.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video1.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video9.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video7.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video8.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video2.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video5.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video3.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video6.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video0.mp4",
+                "video_results": true
+            }
+        ]
+    ],
+    "aesthetic_quality": [
+        0.5275823414325714,
+        [
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video4.mp4",
+                "video_results": 0.5251672863960266
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video1.mp4",
+                "video_results": 0.657585859298706
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video9.mp4",
+                "video_results": 0.5634528994560242
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video7.mp4",
+                "video_results": 0.49676409363746643
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video8.mp4",
+                "video_results": 0.4378483295440674
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video2.mp4",
+                "video_results": 0.5574943423271179
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video5.mp4",
+                "video_results": 0.615738034248352
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video3.mp4",
+                "video_results": 0.4934331178665161
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video6.mp4",
+                "video_results": 0.4977512061595917
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video0.mp4",
+                "video_results": 0.4305882453918457
+            }
+        ]
+    ],
+    "imaging_quality": [
+        0.4776997763198099,
+        [
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video4.mp4",
+                "video_results": 61.922775974980105
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video1.mp4",
+                "video_results": 58.81742458578981
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video9.mp4",
+                "video_results": 41.964703689386816
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video7.mp4",
+                "video_results": 42.87318352122366
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video8.mp4",
+                "video_results": 41.691379888558096
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video2.mp4",
+                "video_results": 51.03859724821868
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video5.mp4",
+                "video_results": 63.42010460370852
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video3.mp4",
+                "video_results": 39.373980110074264
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video6.mp4",
+                "video_results": 34.77228965288327
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video0.mp4",
+                "video_results": 41.825337044986675
+            }
+        ]
+    ],
+    "temporal_flickering": [
+        0.97439694666395,
+        [
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video4.mp4",
+                "video_results": 0.9857950098374311
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video1.mp4",
+                "video_results": 0.9909918018415862
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video9.mp4",
+                "video_results": 0.9804948189679314
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video7.mp4",
+                "video_results": 0.9637736264397117
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video8.mp4",
+                "video_results": 0.9747628847757975
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video2.mp4",
+                "video_results": 0.9693936160966462
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video5.mp4",
+                "video_results": 0.9879535899442785
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video3.mp4",
+                "video_results": 0.9572604385076785
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video6.mp4",
+                "video_results": 0.9731800116744695
+            },
+            {
+                "video_path": "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type5/video0.mp4",
+                "video_results": 0.9603636685539695
+            }
+        ]
+    ]
+}

@@ -67,7 +67,7 @@ class ImageSequenceDataset(Dataset):
         for image_dir in self.image_dirs:
             frame_paths = sorted(glob.glob(image_dir + (f'/*.{ext}' if ext else '/*')))
             self.frame_paths.extend(frame_paths)
-        print(f'Loaded {len(self.frame_paths)} images')
+        # print(f'Loaded {len(self.frame_paths)} images')
 
     def __len__(self):
         return (

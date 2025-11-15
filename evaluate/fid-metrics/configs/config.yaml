@@ -28,12 +28,12 @@ metrics:
       # path: i3d_torchscript.pt
     data:
       dataset:
-        sequence_length: 2
+        sequence_length: 6
         resize_shape: [224, 224]
       batch_size: 4
       num_workers: 16
 
 # num_iters: 1000
 paths: 
-  - '/data1/home/liu_kai/RecamMaster_plucker/evaluate/fvd_v_view_frames_gen'  
-  - '/data1/home/liu_kai/RecamMaster_plucker/evaluate/fvd_v_view_frames_real'  
+  - '/data1/home/liu_kai/RecamMaster_plucker/evaluate/recam_fvd_v_view_frames_gen_5'  
+  - '/data1/home/liu_kai/RecamMaster_plucker/evaluate/fvd_v_view_frames_real_5'  

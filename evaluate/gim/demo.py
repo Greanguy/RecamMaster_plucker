@@ -481,50 +481,34 @@ if __name__ == '__main__':
     # 若提供了根目录参数，则运行“批量 Mat.Pix.”并退出；否则走原有 demo 单对可视化
     if args.generated_root is not None and args.real_root is not None:
         def list_frame_dirs(root):
-            return sorted([d.path for d in os.scandir(root) if d.is_dir()],key=lambda p: os.path.basename(p))
-
-        def norm_key(name):
-            """
-            归一化子目录名，去掉常见前缀/后缀，只保留“主体部分”，用于两侧配对：
-            e.g. generated_video01_frames / real_video01_frames -> video01
-            """
-            n = name.lower()
-            n = re.sub(r'_frames$', '', n)              # 去掉尾缀
-            n = re.sub(r'^(generated|gen|real|gt|pred|fake|rendered)_?', '', n)  # 去掉前缀
-            n = re.sub(r'^(video|vid)_?', '', n)        # 常见“video_”前缀
-            return n
+            dirs = [d.path for d in os.scandir(root) if d.is_dir()]
+            def sort_key(p):
+                name = os.path.basename(p)
+                m = re.search(r'\d+', name)
+                if m:
+                    return int(m.group(0))   # 用目录名里第一次出现的数字做排序，比如 video0, video1, 1, 2, 10 等
+                return float('inf')          # 没数字的排在最后
+            return sorted(dirs, key=sort_key)
 
         gen_subdirs = list_frame_dirs(args.generated_root)
         real_subdirs = list_frame_dirs(args.real_root)
+
         assert len(gen_subdirs) > 0, f"未在 {args.generated_root} 下找到子目录"
         assert len(real_subdirs) > 0, f"未在 {args.real_root} 下找到子目录"
+        assert len(gen_subdirs) == len(real_subdirs), (
+            f"生成侧子目录数量({len(gen_subdirs)})与真实侧({len(real_subdirs)})不一致，"
+            f"无法按顺序一一配对"
+        )
 
-        # 建立 real 侧的索引
-        real_index = {norm_key(os.path.basename(p)): p for p in real_subdirs}
+        pairs = list(zip(gen_subdirs, real_subdirs))
 
-        # 生成配对列表
-        pairs = []
-        for gen_dir in gen_subdirs:
-            gname = os.path.basename(gen_dir)
-            k = norm_key(gname)
-            real_dir = real_index.get(k)
-
-            # 兜底：按数字编号匹配（如 01/001）
-            if real_dir is None:
-                m = re.search(r'(\d+)', k)
-                if m:
-                    num = m.group(1)
-                    # 在 real_index 的 key 里找包含同编号的
-                    cands = [p for rk, p in real_index.items()
-                            if re.search(rf'(\D|^){int(num)}(\D|$)', rk) or rk.endswith(num)]
-                    if len(cands) == 1:
-                        real_dir = cands[0]
-
-            assert real_dir is not None, f"找不到与 {gen_dir} 对应的真实帧目录，请检查命名或手动调整归一化规则"
-            pairs.append((gen_dir, real_dir))
+        # print("按顺序配对结果：")
+        # for g, r in pairs:
+        #     print("  GEN :", os.path.basename(g), "  <-->  REAL :", os.path.basename(r))
 
         # 帧通配符：支持逗号分隔多后缀（例如 'frame_*.jpg,frame_*.png'）
         patterns = [p.strip() for p in args.frame_glob.split(',') if p.strip()]
+
 
         def list_frames(d):
             files = []

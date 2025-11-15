@@ -1,0 +1,8 @@
+0: background
+1: person
+2: person
+3: person
+4: person
+5: car
+6: car
+7: person

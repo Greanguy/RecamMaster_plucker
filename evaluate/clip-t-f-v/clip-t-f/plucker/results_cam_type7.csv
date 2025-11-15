@@ -1,0 +1,12 @@
+video,prompt,num_frames,clip_t,clip_f,note
+/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type7/1.mp4,A man and a woman are dancing together on a city s,81,0.29338371753692627,0.9754642844200134,
+/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type7/10.mp4,A person dressed in a vibrant red suit with a yell,81,0.09778153896331787,0.9907920956611633,
+/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type7/2.mp4,"A man and a woman sit on a wooden bench in a park,",81,0.10352537781000137,0.9698797464370728,
+/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type7/3.mp4,"A man in a plaid suit jacket, white shirt, and dar",81,0.15455877780914307,0.9934045076370239,
+/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type7/4.mp4,A couple is dancing in a luxurious ballroom filled,81,0.06866217404603958,0.988416314125061,
+/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type7/5.mp4,"A couple is seen on the deck of a large ship, embr",81,0.19022437930107117,0.9733892679214478,
+/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type7/6.mp4,A man in a white shirt and suspenders sits against,81,0.1346854567527771,0.9829549789428711,
+/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type7/7.mp4,A man in a classic trench coat and hat is seen wal,81,0.1299358606338501,0.9967992901802063,
+/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type7/8.mp4,A man in a dark suit and tie is walking down a hal,81,0.1590190827846527,0.9690971374511719,
+/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type7/9.mp4,A man in a black suit and a green shirt is standin,81,0.15177427232265472,0.9842244982719421,
+ALL_MEAN,,,0.1483550637960434,0.9824422121047973,mean_over_10_videos

@@ -1,0 +1,152 @@
+[
+    {
+        "prompt_en": "video4",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality",
+            "temporal_flickering"
+        ],
+        "video_list": [
+            "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type1/video4.mp4"
+        ]
+    },
+    {
+        "prompt_en": "video1",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality",
+            "temporal_flickering"
+        ],
+        "video_list": [
+            "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type1/video1.mp4"
+        ]
+    },
+    {
+        "prompt_en": "video9",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality",
+            "temporal_flickering"
+        ],
+        "video_list": [
+            "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type1/video9.mp4"
+        ]
+    },
+    {
+        "prompt_en": "video7",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality",
+            "temporal_flickering"
+        ],
+        "video_list": [
+            "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type1/video7.mp4"
+        ]
+    },
+    {
+        "prompt_en": "video8",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality",
+            "temporal_flickering"
+        ],
+        "video_list": [
+            "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type1/video8.mp4"
+        ]
+    },
+    {
+        "prompt_en": "video2",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality",
+            "temporal_flickering"
+        ],
+        "video_list": [
+            "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type1/video2.mp4"
+        ]
+    },
+    {
+        "prompt_en": "video5",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality",
+            "temporal_flickering"
+        ],
+        "video_list": [
+            "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type1/video5.mp4"
+        ]
+    },
+    {
+        "prompt_en": "video3",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality",
+            "temporal_flickering"
+        ],
+        "video_list": [
+            "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type1/video3.mp4"
+        ]
+    },
+    {
+        "prompt_en": "video6",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality",
+            "temporal_flickering"
+        ],
+        "video_list": [
+            "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type1/video6.mp4"
+        ]
+    },
+    {
+        "prompt_en": "video0",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality",
+            "temporal_flickering"
+        ],
+        "video_list": [
+            "/data1/home/liu_kai/ReCamMaster/ckpt_20000_plucker/cam_type1/video0.mp4"
+        ]
+    }
+]

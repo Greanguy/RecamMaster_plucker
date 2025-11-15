@@ -1,0 +1,4 @@
+0: background
+1: person
+2: vehicle
+3: sky

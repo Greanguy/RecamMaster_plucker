@@ -6,7 +6,7 @@ import pandas as pd
 import numpy as np
 from tqdm import tqdm
 from PIL import Image
-
+from collections import defaultdict
 
 # ---------------- Video backends ----------------
 _BACKENDS = {}
@@ -203,120 +203,182 @@ def clip_T_and_F(model, tokenizer, preprocess, frames: List[torch.Tensor], promp
         clip_f, per_pair = float("nan"), np.array([])
     return clip_t, clip_f, sim_t.float().cpu().numpy(), per_pair
 
-@torch.no_grad()
-def compute_clip_v_for_pairs(model,preprocess,pair_root: str,device: str = "cuda",fp16: bool = False,batch_size: int = 64,
-    out_csv: str = "clipv_results.csv",dump_per_frame: Optional[str] = None):
+def compute_clip_v_for_pairs(
+    model,
+    preprocess,
+    pair_root: str,
+    device: str = "cuda",
+    fp16: bool = False,
+    batch_size: int = 64,
+    out_csv: str = "clipv_results.csv",
+    dump_per_frame: Optional[str] = None,
+):
     """
     pair_root 结构为:
       pair_root/
         video001/
-          t0000/ frame_0000.jpg frame_0001.jpg
+          t0000/ frame_0000.jpg frame_0001.jpg frame_0002.jpg ...
           t0001/ ...
         video002/
           ...
 
-    每个 tXXXX 目录中取两张图 (按文件名排序取前两张)
-    用 CLIP image encoder 编码后算余弦相似度
-    对一个 videoXXX 下的所有 tXXXX 求平均，即为该 pair 的 CLIP-V
+    约定:
+      - 每个 tXXXX/ 下:
+          imgs[0] 为原始帧 (GT)
+          imgs[1:], imgs[2:], ... 为该 time 的多视角生成帧
+
+    计算方式:
+      1) 用 CLIP image encoder 分别编码 GT 和所有生成视角
+      2) 对于每个 time t, 计算:
+         s_{t,j} = cos( f(GT_t), f(gen_{t,j}) ), j = 1..M_t
+         S_t = mean_j s_{t,j}
+      3) 对于每个视频对 video_i, 求:
+         CLIP-V_i = mean_t S_t
+      4) 全局再对所有视频的 CLIP-V_i 取平均
     """
+
     assert os.path.isdir(pair_root), f"Invalid pair_root: {pair_root}"
 
     def _is_img(f):
         return f.lower().endswith((".jpg", ".jpeg", ".png", ".bmp", ".webp"))
-
     all_rows = []
     per_rows = []
-
     video_dirs = sorted([d for d in os.listdir(pair_root) if os.path.isdir(os.path.join(pair_root, d))])
-
-    for vname in tqdm(video_dirs, desc="Computing CLIP-V (pairs)"):
+    for vname in tqdm(video_dirs, desc="Computing CLIP-V (pairs, multi-view)"):
         vdir = os.path.join(pair_root, vname)
-        time_dirs = sorted([d for d in os.listdir(vdir) if os.path.isdir(os.path.join(vdir, d))])
+        time_dirs = sorted(
+            [d for d in os.listdir(vdir) if os.path.isdir(os.path.join(vdir, d))]
+        )
 
-        # 收集该视频下所有 (t_dir, img1, img2)
-        pair_infos = []  # (tname, img1_path, img2_path)
+        # ----------------------------------------------------------
+        # 1) 构建 (tname, ref_path, gen_path) 列表
+        # ----------------------------------------------------------
+        pair_infos = []  # (tname, ref_path, gen_path)
         for tname in time_dirs:
             tdir = os.path.join(vdir, tname)
-            imgs = sorted([
-                os.path.join(tdir, f)
-                for f in os.listdir(tdir)
-                if _is_img(f)
-            ])
+            imgs = sorted(
+                [os.path.join(tdir, f) for f in os.listdir(tdir) if _is_img(f)]
+            )
             if len(imgs) < 2:
+                # 没有 ref+gen 至少两张图，跳过这个 time
                 continue
-            pair_infos.append((tname, imgs[0], imgs[1]))
+
+            ref_path = imgs[0]       # 第一张认为是原图
+            gen_paths = imgs[1:]     # 后面的都是生成视角
+
+            for gp in gen_paths:
+                pair_infos.append((tname, ref_path, gp))
 
         if len(pair_infos) == 0:
-            all_rows.append({
-                "video_pair": vname,
-                "num_pairs": 0,
-                "clip_v": "",
-                "note": "no_valid_pairs"
-            })
+            all_rows.append(
+                {
+                    "video_pair": vname,
+                    "num_pairs": 0,
+                    "clip_v": "",
+                    "note": "no_valid_pairs",
+                }
+            )
             continue
 
-        # 一次性把该 video 下所有图片读入 批量算特征
+        # ----------------------------------------------------------
+        # 2) 为了避免重复读同一张 ref 图，用 path_to_idx 做缓存
+        # ----------------------------------------------------------
         pil_images = []
-        pair_index = []  # (idx1, idx2, tname)
-        for tname, p1, p2 in pair_infos:
-            im1 = Image.open(p1).convert("RGB")
-            im2 = Image.open(p2).convert("RGB")
-            pil_images.append(im1)
-            pil_images.append(im2)
-            idx1 = len(pil_images) - 2
-            idx2 = len(pil_images) - 1
-            pair_index.append((idx1, idx2, tname))
+        path_to_idx = {}  # img_path -> index in pil_images
 
+        def _get_idx(path: str) -> int:
+            if path in path_to_idx:
+                return path_to_idx[path]
+            im = Image.open(path).convert("RGB")
+            pil_images.append(im)
+            idx = len(pil_images) - 1
+            path_to_idx[path] = idx
+            return idx
+
+        pair_index = []  # (idx_ref, idx_gen, tname)
+        for tname, ref_path, gen_path in pair_infos:
+            idx_ref = _get_idx(ref_path)
+            idx_gen = _get_idx(gen_path)
+            pair_index.append((idx_ref, idx_gen, tname))
+
+        # ----------------------------------------------------------
+        # 3) 预处理 + 特征提取 (batch)
+        # ----------------------------------------------------------
         tensors = [preprocess(im) for im in pil_images]
         X = torch.stack(tensors, dim=0).to(device)
 
         feats_list = []
-        for i in range(0, X.shape[0], batch_size):
-            xb = X[i:i+batch_size]
-            fb = model.encode_image(xb)
-            if fp16 and device.startswith("cuda"):
-                fb = fb.to(dtype=torch.float16)
-            fb = fb / fb.norm(dim=-1, keepdim=True)
-            feats_list.append(fb)
+        with torch.no_grad():
+            for i in range(0, X.shape[0], batch_size):
+                xb = X[i : i + batch_size]
+                fb = model.encode_image(xb)
+                if fp16 and device.startswith("cuda"):
+                    fb = fb.to(dtype=torch.float16)
+                fb = fb / fb.norm(dim=-1, keepdim=True)  # L2 归一化
+                feats_list.append(fb)
         feats = torch.cat(feats_list, dim=0)  # [N, D]
 
-        # 逐对计算相似度
-        sims = []
-        for idx1, idx2, tname in pair_index:
-            f1 = feats[idx1]
-            f2 = feats[idx2]
-            s = (f1 * f2).sum().item()  # 余弦相似度（已归一化）
+        # ----------------------------------------------------------
+        # 4) 逐对计算相似度，然后按 time 进行聚合
+        # ----------------------------------------------------------
+        sims = []  # 列表: (tname, s_{t,j})
+        for idx_ref, idx_gen, tname in pair_index:
+            f_ref = feats[idx_ref]
+            f_gen = feats[idx_gen]
+            s = (f_ref * f_gen).sum().item()  # cos sim
             sims.append((tname, s))
 
-        values = [s for (_, s) in sims]
-        clip_v = float(np.mean(values))
+        # 按 tname 分组求均值: S_t = mean_j s_{t,j}
+        by_time = defaultdict(list)
+        for tname, s in sims:
+            by_time[tname].append(s)
 
-        all_rows.append({
-            "video_pair": vname,
-            "num_pairs": len(values),
-            "clip_v": clip_v,
-            "note": ""
-        })
+        time_scores = {}  # tname -> S_t
+        for tname, vals in by_time.items():
+            time_scores[tname] = float(np.mean(vals))
 
+        # 视频级 CLIP-V: mean_t S_t
+        clip_v = float(np.mean(list(time_scores.values())))
+
+        all_rows.append(
+            {
+                "video_pair": vname,
+                "num_pairs": len(sims),  # 总的 (ref, gen) 对数
+                "clip_v": clip_v,
+                "note": "",
+            }
+        )
+
+        # 如果需要 per-frame 结果，就输出 "该 time 的多视角平均值"
         if dump_per_frame is not None:
-            for tname, s in sims:
-                per_rows.append({
-                    "video_pair": vname,
-                    "time": tname,
-                    "index": int(tname[1:]) if tname.startswith("t") and tname[1:].isdigit() else "",
-                    "value": float(s),
-                })
+            for tname, val in time_scores.items():
+                per_rows.append(
+                    {
+                        "video_pair": vname,
+                        "time": tname,
+                        "index": int(tname[1:])
+                        if tname.startswith("t") and tname[1:].isdigit()
+                        else "",
+                        "value": float(val),
+                    }
+                )
 
-    # 全局平均 CLIP-V
-    valid_vals = [r["clip_v"] for r in all_rows if isinstance(r.get("clip_v"), (int, float))]
+    # --------------------------------------------------------------
+    # 5) 计算全局平均 CLIP-V
+    # --------------------------------------------------------------
+    valid_vals = [
+        r["clip_v"] for r in all_rows if isinstance(r.get("clip_v"), (int, float))
+    ]
     if len(valid_vals) > 0:
         mean_v = float(np.mean(valid_vals))
-        all_rows.append({
-            "video_pair": "ALL_MEAN",
-            "num_pairs": "",
-            "clip_v": mean_v,
-            "note": f"mean_over_{len(valid_vals)}_video_pairs"
-        })
+        all_rows.append(
+            {
+                "video_pair": "ALL_MEAN",
+                "num_pairs": "",
+                "clip_v": mean_v,
+                "note": f"mean_over_{len(valid_vals)}_video_pairs",
+            }
+        )
 
     os.makedirs(os.path.dirname(out_csv) or ".", exist_ok=True)
     pd.DataFrame(all_rows).to_csv(out_csv, index=False)

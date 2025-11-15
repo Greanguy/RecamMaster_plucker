@@ -53,31 +53,31 @@ MODEL="ViT-L-14"
 PRETRAINED_PATH="./clip-t-f-v/open_clip_model.safetensors"
 
 OUT_DIR="./clip-t-f-v/clip-t-f"
-CLIPV_OUT="${OUT_DIR}/clipv_results_recam_5.csv"
+CLIPV_OUT="${OUT_DIR}/2_clipv_results_recam_5.csv"
 
 mkdir -p "${OUT_DIR}"
 
-for CAM in $CAMS; do
-    VIDEO_ROOT="${BASE_VIDEO_ROOT}/cam_type${CAM}"
-    OUT="${OUT_DIR}/recam/results_cam_type${CAM}.csv"
+# for CAM in $CAMS; do
+#     VIDEO_ROOT="${BASE_VIDEO_ROOT}/cam_type${CAM}"
+#     OUT="${OUT_DIR}/recam2/results_cam_type${CAM}.csv"
 
-    # 简单检查一下视频目录是否存在，避免直接报错
-    if [ ! -d "${VIDEO_ROOT}" ]; then
-        echo "WARNING: ${VIDEO_ROOT} 不存在，跳过 cam_type${CAM}"
-        continue
-    fi
+#     # 简单检查一下视频目录是否存在，避免直接报错
+#     if [ ! -d "${VIDEO_ROOT}" ]; then
+#         echo "WARNING: ${VIDEO_ROOT} 不存在，跳过 cam_type${CAM}"
+#         continue
+#     fi
 
-    echo "Running CLIP-T/F/V for ${VIDEO_ROOT}"
+#     echo "Running CLIP-T/F/V for ${VIDEO_ROOT}"
 
-    python ./clip-t-f-v/clip-t-f.py \
-      --video-root "${VIDEO_ROOT}" \
-      --prompts-csv "${PROMPTS_CSV}" \
-      --csv-video-col file_name --csv-text-col text \
-      --model "${MODEL}"  \
-      --pretrained-path "${PRETRAINED_PATH}" \
-      --num-frames 81 --batch-size 128 \
-      --out "${OUT}" 
-done
+#     python ./clip-t-f-v/clip-t-f.py \
+#       --video-root "${VIDEO_ROOT}" \
+#       --prompts-csv "${PROMPTS_CSV}" \
+#       --csv-video-col file_name --csv-text-col text \
+#       --model "${MODEL}"  \
+#       --pretrained-path "${PRETRAINED_PATH}" \
+#       --num-frames 81 --batch-size 128 \
+#       --out "${OUT}" 
+# done
 
 python ./clip-t-f-v/clip-t-f.py \
   --model ViT-L-14 \
@@ -92,31 +92,31 @@ MODEL="ViT-L-14"
 PRETRAINED_PATH="./clip-t-f-v/open_clip_model.safetensors"
 
 OUT_DIR="./clip-t-f-v/clip-t-f"
-CLIPV_OUT="${OUT_DIR}/clipv_results_plucker_5.csv"
+CLIPV_OUT="${OUT_DIR}/2_clipv_results_plucker_5.csv"
 
 mkdir -p "${OUT_DIR}"
 
-for CAM in $CAMS; do
-    VIDEO_ROOT="${BASE_VIDEO_ROOT}/cam_type${CAM}"
-    OUT="${OUT_DIR}/plucker/results_cam_type${CAM}.csv"
+# for CAM in $CAMS; do
+#     VIDEO_ROOT="${BASE_VIDEO_ROOT}/cam_type${CAM}"
+#     OUT="${OUT_DIR}/plucker2/results_cam_type${CAM}.csv"
 
-    # 简单检查一下视频目录是否存在，避免直接报错
-    if [ ! -d "${VIDEO_ROOT}" ]; then
-        echo "WARNING: ${VIDEO_ROOT} 不存在，跳过 cam_type${CAM}"
-        continue
-    fi
+#     # 简单检查一下视频目录是否存在，避免直接报错
+#     if [ ! -d "${VIDEO_ROOT}" ]; then
+#         echo "WARNING: ${VIDEO_ROOT} 不存在，跳过 cam_type${CAM}"
+#         continue
+#     fi
 
-    echo "Running CLIP-T/F/V for ${VIDEO_ROOT}"
+#     echo "Running CLIP-T/F/V for ${VIDEO_ROOT}"
 
-    python ./clip-t-f-v/clip-t-f.py \
-      --video-root "${VIDEO_ROOT}" \
-      --prompts-csv "${PROMPTS_CSV}" \
-      --csv-video-col file_name --csv-text-col text \
-      --model "${MODEL}"  \
-      --pretrained-path "${PRETRAINED_PATH}" \
-      --num-frames 81 --batch-size 128 \
-      --out "${OUT}" 
-done
+#     python ./clip-t-f-v/clip-t-f.py \
+#       --video-root "${VIDEO_ROOT}" \
+#       --prompts-csv "${PROMPTS_CSV}" \
+#       --csv-video-col file_name --csv-text-col text \
+#       --model "${MODEL}"  \
+#       --pretrained-path "${PRETRAINED_PATH}" \
+#       --num-frames 81 --batch-size 128 \
+#       --out "${OUT}" 
+# done
 
 python ./clip-t-f-v/clip-t-f.py \
   --model ViT-L-14 \

@@ -331,7 +331,7 @@ class LightningModelForTrain(pl.LightningModule):
             # block.cam_encoder = nn.Conv2d(in_channels=6, out_channels=dim, kernel_size=(16, 16), stride=(16, 16))
             block.projector = nn.Linear(dim, dim)
             # block.cam_encoder.weight.data.zero_()
-            # nn.init.kaiming_normal_(block.cam_encoder.weight, mode="fan_out", nonlinearity="relu") # need to try another method
+            # nn.init.kaiming_normal_(block.cam_encoder.weight, mode="fan_out", nonlinearity="relu") # need to try another method, but zero_ is ok(SANA also use zero_)
             # block.cam_encoder.bias.data.zero_()
             block.projector.weight = nn.Parameter(torch.eye(dim))
             block.projector.bias = nn.Parameter(torch.zeros(dim))
@@ -708,7 +708,7 @@ def train(args):
         swanlab_config.update(vars(args))
         swanlab_logger = SwanLabLogger(
             project="wan", 
-            name="wan-PRoPE",
+            name="wan-PRoPE-final",
             config=swanlab_config,
             mode=args.swanlab_mode,
             logdir=os.path.join(args.output_path, "swanlog"),

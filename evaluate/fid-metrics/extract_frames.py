@@ -2,6 +2,7 @@ import os
 import cv2
 import numpy as np
 
+# 单个视频提取指定数量的帧，保存到 output_folder
 def extract_frames(video_path, output_folder, num_frames=81):
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
@@ -17,7 +18,7 @@ def extract_frames(video_path, output_folder, num_frames=81):
         count += 1
     cap.release()
 
-
+# 从一个文件夹中提取所有视频的帧
 def extract_frames_from_dir(video_dir,output_root,num_frames=81,exts=(".mp4", ".avi", ".mov", ".mkv", ".webm"),):
     """
     video_dir: 输入视频所在文件夹
@@ -32,14 +33,10 @@ def extract_frames_from_dir(video_dir,output_root,num_frames=81,exts=(".mp4", ".
         # 跳过非视频文件
         if not fname.lower().endswith(exts):
             continue
-
         video_path = os.path.join(video_dir, fname)
-        video_name = os.path.splitext(fname)[0]
-
-        # 每个视频一个单独输出文件夹
+        video_name = os.path.splitext(fname)[0]  # 去掉后缀作为视频名
         output_folder = os.path.join(output_root, video_name)
-        print(f"Processing {video_path} -> {output_folder}")
-
+        # print(f"Processing {video_path} -> {output_folder}")
         extract_frames(video_path, output_folder, num_frames=num_frames)
 
 
@@ -59,7 +56,7 @@ def _read_video_frames(video_path, max_frames=None):
     cap.release()
     return frames
 
-
+# 从真实视频目录和多个生成视频目录中，构造“同一 timestep 下不同视角”的伪视频（帧目录形式）
 def build_view_pseudo_videos_as_frame_dirs(
     real_dir,
     gen_dirs,

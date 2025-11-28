@@ -706,9 +706,39 @@ class DiTBlock(nn.Module):
     #     x = x + gate_mlp * self.ffn(input_x)
     #     return x
     
+    # def forward(self, x, context, cam_emb, intrin_emb, t_mod, freqs):
+    #     '''
+    #         PRoPE version
+    #     '''
+    #     # msa: multi-head self-attention  mlp: multi-layer perceptron
+    #     shift_msa, scale_msa, gate_msa, shift_mlp, scale_mlp, gate_mlp = (
+    #         self.modulation.to(dtype=t_mod.dtype, device=t_mod.device) + t_mod).chunk(6, dim=1)
+    #     input_x = modulate(self.norm1(x), shift_msa, scale_msa)
+
+    #     # cam_emb: (1, 21, 4, 4), intrin_emb: (1, 21, 4), input_x: (1, 65520, 1536)
+    #     cam_emb = cam_emb.repeat(1, 2, 1, 1) 
+    #     intrin_emb = intrin_emb.repeat(1, 2, 1) 
+
+    #     cam_emb_w2c = torch.linalg.inv(cam_emb.to(torch.float32)).to(cam_emb.dtype)  
+    #     b, f, _, = intrin_emb.shape
+    #     intrin_K = torch.zeros(b, f, 3, 3, device=intrin_emb.device, dtype=intrin_emb.dtype)
+    #     intrin_K[:, :, 0, 0] = intrin_emb[:, :, 0]
+    #     intrin_K[:, :, 1, 1] = intrin_emb[:, :, 1]
+    #     intrin_K[:, :, 0, 2] = intrin_emb[:, :, 2]
+    #     intrin_K[:, :, 1, 2] = intrin_emb[:, :, 3]
+    #     intrin_K[:, :, 2, 2] = 1.0
+
+    #     x = x + gate_msa * self.projector(self.self_attn(input_x, input_x, input_x, cam_emb_w2c, intrin_K))
+        
+    #     x = x + self.cross_attn(self.norm3(x), context)
+    #     input_x = modulate(self.norm2(x), shift_mlp, scale_mlp)
+    #     x = x + gate_mlp * self.ffn(input_x)
+    #     return x
+    
+
     def forward(self, x, context, cam_emb, intrin_emb, t_mod, freqs):
         '''
-            PRoPE version
+            hybrid version
         '''
         # msa: multi-head self-attention  mlp: multi-layer perceptron
         shift_msa, scale_msa, gate_msa, shift_mlp, scale_mlp, gate_mlp = (
@@ -716,6 +746,20 @@ class DiTBlock(nn.Module):
         input_x = modulate(self.norm1(x), shift_msa, scale_msa)
 
         # cam_emb: (1, 21, 4, 4), intrin_emb: (1, 21, 4), input_x: (1, 65520, 1536)
+        plucker_emb = ray_condition(intrin_emb, cam_emb, device=cam_emb.device)
+        b, f, H, W, c = plucker_emb.shape
+        # permute to (b, f, c, H, W) then flatten batch and frame dims
+        plucker_for_conv = plucker_emb.permute(0, 1, 4, 2, 3).reshape(b * f, c, H, W)
+        # apply conv -> (b*f, dim, H_out, W_out) where H_out=30, W_out=52 for 480x832 input
+        cam_plucker_conv = self.cam_encoder(plucker_for_conv)
+        H_out, W_out = cam_plucker_conv.shape[-2], cam_plucker_conv.shape[-1]
+        # reshape back to (b, f, H_out, W_out, dim)
+        cam_plucker = cam_plucker_conv.reshape(b, f, self.dim, H_out, W_out).permute(0, 1, 3, 4, 2)
+        cam_plucker = cam_plucker.repeat(1, 2, 1, 1, 1)
+        cam_plucker = rearrange(cam_plucker, 'b f h w d -> b (f h w) d')
+        input_x = input_x + cam_plucker
+
+
         cam_emb = cam_emb.repeat(1, 2, 1, 1) 
         intrin_emb = intrin_emb.repeat(1, 2, 1) 
 

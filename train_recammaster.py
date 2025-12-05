@@ -709,7 +709,7 @@ def train(args):
         swanlab_config.update(vars(args))
         swanlab_logger = SwanLabLogger(
             project="wan", 
-            name="wan-PRoPE-final",
+            name="wan-hybrid",
             config=swanlab_config,
             mode=args.swanlab_mode,
             logdir=os.path.join(args.output_path, "swanlog"),
